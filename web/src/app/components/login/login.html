@@ -1,0 +1,41 @@
+<section class="login">
+  <div class="inner-login">
+    <div class="container-logo">
+      <img src="farol-logo.png" alt="Ícone Farol Investing" />
+      <span>Farol Investing</span>
+    </div>
+
+    <form class="card" (submit)="onSubmit($event)">
+      <h1>Entrar</h1>
+      <p class="subtitulo">Acesse sua conta para continuar.</p>
+
+      <div class="campo">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="voce@email.com"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          name="senha"
+          type="password"
+          autocomplete="current-password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-entrar">Entrar</button>
+
+      <p class="cadastro">Não tem conta? <a href="#">Cadastre-se</a></p>
+    </form>
+  </div>
+</section>

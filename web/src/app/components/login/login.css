@@ -1,0 +1,134 @@
+.login {
+  min-height: 100vh;
+  padding: 24px 16px;
+  background-color: var(--cor-fundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner-login {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Logo */
+.container-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.container-logo img {
+  width: 72px;
+}
+
+.container-logo span {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--cor-primaria);
+}
+
+/* Cartão */
+.card {
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-top: 4px solid var(--cor-dourado);
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 24px rgba(20, 40, 75, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: var(--cor-texto-secundario);
+  margin-top: -10px;
+}
+
+/* Campos */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.campo input {
+  font: inherit;
+  font-size: 14px;
+  padding: 11px 12px;
+  color: var(--cor-texto);
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.campo input::placeholder {
+  color: var(--cor-texto-secundario);
+  opacity: 0.6;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(20, 40, 75, 0.15);
+}
+
+/* Botão */
+.btn-entrar {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-entrar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.btn-entrar:focus-visible {
+  outline: 3px solid var(--cor-dourado);
+  outline-offset: 2px;
+}
+
+/* Rodapé do cartão */
+.cadastro {
+  font-size: 13px;
+  text-align: center;
+  color: var(--cor-texto-secundario);
+}
+
+.cadastro a {
+  font-weight: 700;
+  color: var(--cor-dourado-texto);
+  text-decoration: none;
+}
+
+.cadastro a:hover {
+  text-decoration: underline;
+}

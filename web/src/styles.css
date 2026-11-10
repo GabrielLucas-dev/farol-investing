@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --cor-fundo: #F9F5DC;
+    --cor-primaria: #14284B;
+    --cor-primaria-hover: #1E3A6B;
+    --cor-superficie: #FFFFFF;
+    --cor-texto: #12233F;
+    --cor-texto-secundario: #55637A;
+    --cor-borda: #D9DFE8;
+    --cor-dourado: #B8821F;
+    --cor-dourado-texto: #9A6A12;
+    --cor-perigo: #B3322F;
+}
+
+body {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--cor-texto);
+    background-color: var(--cor-fundo);
+}
