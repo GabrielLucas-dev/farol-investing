@@ -1,0 +1,70 @@
+<section class="login">
+  <div class="inner-login">
+    <div class="container-logo">
+      <img src="farol-logo.png" alt="Ícone Farol Investing" />
+      <span>Farol Investing</span>
+    </div>
+
+    <form class="card" (submit)="onSubmit($event)">
+      <h1>Criar conta</h1>
+      <p class="subtitulo">Preencha os dados para se cadastrar.</p>
+
+      <div class="campo">
+        <label for="nome">Nome</label>
+        <input
+          id="nome"
+          name="nome"
+          type="text"
+          autocomplete="name"
+          placeholder="Seu nome completo"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input
+          id="cpf"
+          name="cpf"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="000.000.000-00"
+          maxlength="14"
+          pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+          title="Informe o CPF no formato 000.000.000-00"
+          (input)="formatarCpf($event)"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="voce@email.com"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          name="senha"
+          type="password"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-entrar">Cadastrar</button>
+
+      <p class="cadastro">Já tem conta? <a routerLink="/login">Entrar</a></p>
+    </form>
+  </div>
+</section>
