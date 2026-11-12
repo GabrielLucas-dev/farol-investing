@@ -1,0 +1,32 @@
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="farol-icon.svg" alt="" width="40" height="40" />
+    <span>Farol Invest</span>
+  </div>
+
+  <nav class="sidebar-menu" aria-label="Menu principal">
+    @for (item of menu; track item.label) {
+      @if (item.route) {
+        <a
+          class="menu-item"
+          [routerLink]="item.route"
+          routerLinkActive="ativo"
+          ariaCurrentWhenActive="page"
+        >
+          <span class="menu-item-conteudo">
+            <img [src]="item.icon" alt="" width="20" height="20" />
+            <span class="menu-item-texto">{{ item.label }}</span>
+          </span>
+        </a>
+      } @else {
+        <span class="menu-item desabilitado" aria-disabled="true">
+          <span class="menu-item-conteudo">
+            <img [src]="item.icon" alt="" width="20" height="20" />
+            <span class="menu-item-texto">{{ item.label }}</span>
+          </span>
+          <span class="menu-item-tag">Em breve</span>
+        </span>
+      }
+    }
+  </nav>
+</aside>
