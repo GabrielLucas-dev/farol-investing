@@ -3,8 +3,8 @@
 > Documento-base do projeto. É a fonte de verdade para decisões, escopo e convenções.
 > Toda mudança de rumo deve ser registrada aqui **antes** de ser implementada.
 >
-> **Status:** rascunho v0.2 (entrevista inicial + identidade visual).
-> **Última atualização:** 2026-11-02
+> **Status:** rascunho v0.3 (entrevista inicial + identidade visual + revisão da cotação, D3, e do escopo da carteira, D23).
+> **Última atualização:** 2026-11-11
 > Itens marcados com 🔶 estão **em aberto** (ver seção 14).
 
 ---
@@ -52,7 +52,7 @@ O MVP está concluído quando **todos os itens abaixo funcionam de ponta a ponta
 
 **Mercado**
 - Universo: **Ibovespa (~85 ações)**.
-- Cotações com delay de ~15 min, sincronizadas por job agendado e lidas do nosso banco.
+- Cotações de **fechamento**, atualizadas **1 vez por dia** por job agendado e lidas do nosso banco (a tela mostra a data da cotação).
 - Dados fundamentalistas e histórico de dividendos por provedor de API.
 
 **Preço teto**
@@ -60,13 +60,9 @@ O MVP está concluído quando **todos os itens abaixo funcionam de ponta a ponta
 - Premissas: três perfis prontos (conservador, moderado, otimista) **com ajuste manual** de cada premissa, salvo por usuário e por ativo.
 - Margem de segurança por ativo, com selo (descontada, justa ou cara) e comparador lado a lado dos métodos.
 
-**Carteira**
-- Entrada de dados: **importação do extrato da B3** (arquivo exportado da Área do Investidor) e **modo simulação** (carteiras hipotéticas).
-- Posição e preço médio por ativo.
-- Alocação por setor e por ativo.
-- Dividendos recebidos.
-- Rentabilidade vs benchmarks (Ibovespa e CDI).
-- Projeções: **evolução patrimonial** (com aportes mensais e retorno por cenário) e **renda passiva (dividendos)**.
+**Carteira simulada e projeções**
+- **Modo simulação:** carteiras hipotéticas (ativos do universo, quantidades e preços informados pelo usuário). A carteira real, com importação do extrato da B3, fica para a v1.1 (seção 3.2).
+- Projeções sobre a carteira simulada: **evolução patrimonial** (com aportes mensais e retorno por cenário) e **renda passiva (dividendos)**.
 
 **Agentes de IA**
 - **Ranking das ações mais descontadas por setor** (cálculo determinístico; a IA só narra).
@@ -80,6 +76,7 @@ O MVP está concluído quando **todos os itens abaixo funcionam de ponta a ponta
 
 | Item | Observação |
 |---|---|
+| **Carteira real** (movida do MVP em 2026-11-11, D23) | Importação do extrato da B3, posição e preço médio, alocação por setor e por ativo, dividendos recebidos, rentabilidade vs Ibovespa e CDI. Ver 5.4 |
 | Agente "classe de ativo mais descontada" | Depende de FIIs, ETFs, BDRs, câmbio e renda fixa |
 | Agente de cenário macro global | Locais e classes que mais se beneficiam das notícias |
 | Outras classes de ativos (FIIs, ETFs/BDRs, câmbio, Tesouro, cripto) | MVP é só ações |
@@ -92,6 +89,7 @@ O MVP está concluído quando **todos os itens abaixo funcionam de ponta a ponta
 | Apoio ao IR (ganho de capital, DARF) | |
 | Chat conversacional com o agente | |
 | Backtest dos métodos | Validar historicamente se o preço teto "funcionou" |
+| Cotação intradiária (a cada ~15 min) | Exige plano pago do provedor (ver D3) |
 | Cotação em tempo real | |
 
 ---
@@ -152,14 +150,16 @@ Agendador (cron) → SyncService → MarketDataProvider (interface)
 
 Benefícios: protege a chave da API; respeita limites de requisição; permite trocar de provedor mexendo em um arquivo; guarda histórico próprio; testes sem rede.
 
-- Cotações: job a cada ~15 min no horário do pregão e um job no fechamento (fuso `America/Sao_Paulo`).
+- Cotações: **1 job por dia, após o fechamento do pregão** (fuso `America/Sao_Paulo`). Decisão D3 revisada em 2026-11-11.
 - Fundamentos e dividendos: job diário/semanal (mudam pouco).
 - 🔶 Provedor inicial: **brapi.dev** como candidato. **Validar planos, limites e termos atuais antes de fechar** (ver seção 12 sobre uso comercial).
 - Fonte oficial gratuita para fundamentos no futuro: dados abertos da CVM; macro (Selic, IPCA, câmbio): API do Banco Central.
 
-### 5.4 Importação do extrato da B3
+### 5.4 Importação do extrato da B3 (v1.1, fora do MVP)
 
-A Área do Investidor **não tem API pública** para terceiros. O usuário baixa o extrato (Excel) e faz upload. O parser fica atrás de uma interface, pois o formato pode mudar. 🔶 Preciso de um **arquivo real (com dados anonimizados)** para especificar o parser.
+> Movido do MVP para a v1.1 em 2026-11-11 (D23); mantido aqui como referência.
+
+A Área do Investidor **não tem API pública** para terceiros. O usuário baixa o extrato (Excel) e faz upload. O parser fica atrás de uma interface, pois o formato pode mudar. 🔶 Na v1.1, será preciso um **arquivo real (com dados anonimizados)** para especificar o parser.
 
 ### 5.5 Regras técnicas transversais
 
@@ -173,7 +173,7 @@ A Área do Investidor **não tem API pública** para terceiros. O usuário baixa
 
 ### 5.6 Modelo de dados (rascunho inicial)
 
-`User`, `Portfolio`, `Transaction` (compra/venda, origem: manual, B3 ou simulação), `Asset` (ticker, nome, setor, subsetor), `Quote`, `FundamentalSnapshot`, `Dividend`, `ValuationProfile` (preset + ajustes por usuário/ativo), `ValuationResult` (método, perfil, preço teto, snapshot de insumos, data), `NewsItem`, `AgentReport` (tipo, período, conteúdo estruturado, fontes, modelo, tokens), `ImportJob`.
+`User`, `Portfolio`, `Transaction` (compra/venda, origem: manual, B3 ou simulação; no MVP, só simulação), `Asset` (ticker, nome, setor, subsetor), `Quote`, `FundamentalSnapshot`, `Dividend`, `ValuationProfile` (preset + ajustes por usuário/ativo), `ValuationResult` (método, perfil, preço teto, snapshot de insumos, data), `NewsItem`, `AgentReport` (tipo, período, conteúdo estruturado, fontes, modelo, tokens), `ImportJob` (v1.1).
 
 Será detalhado em ERD antes da primeira migration.
 
@@ -278,7 +278,7 @@ Ordem pensada para você aprender construindo e para o risco cair cedo. Cada fas
 | 2 | Dados de mercado | Adapter do provedor, sync de cotações/fundamentos/dividendos, modelo de dados e migrations |
 | 3 | Conta e perfis | Auth com JWT, perfis de premissa (presets + ajuste manual) |
 | 4 | Preço teto na tela | Telas de ativo: comparador dos métodos, margem de segurança e selos |
-| 5 | Carteira | Transações, preço médio, alocação, dividendos, rentabilidade vs benchmark, import da B3, modo simulação |
+| 5 | Carteira simulada | Carteiras hipotéticas (ativos, quantidades e preços informados pelo usuário), base para as projeções. Carteira real e import da B3 ficam na v1.1 |
 | 6 | Projeções | Evolução patrimonial e renda passiva por cenário |
 | 7 | Agentes | Ranking por setor (A) e notícias + ideias para estudar (B), com jobs agendados |
 | 8 | Acabamento e deploy | Identidade visual aplicada, tema claro/escuro, acessibilidade, deploy no PaaS |
@@ -339,7 +339,7 @@ Ordem pensada para você aprender construindo e para o risco cair cedo. Cada fas
 
 - Dados da carteira são sensíveis financeiramente: acesso sempre filtrado por `user_id`, com testes cobrindo isso.
 - Senhas com argon2; tokens com expiração; refresh token em fase posterior se necessário.
-- Upload de arquivos (extrato B3): validar tipo e tamanho; nunca executar conteúdo; descartar após o processamento ou armazenar de forma controlada.
+- Upload de arquivos (extrato B3, v1.1): validar tipo e tamanho; nunca executar conteúdo; descartar após o processamento ou armazenar de forma controlada.
 - Nunca registrar senhas, tokens ou chaves em logs.
 
 ---
@@ -363,7 +363,7 @@ Ordem pensada para você aprender construindo e para o risco cair cedo. Cada fas
 |---|---|---|---|
 | D1 | MVP só com ações brasileiras | Incluir FIIs, ETFs, câmbio | Reduzir escopo; agentes de classe e macro ficam para v1.1 |
 | D2 | Universo Ibovespa (~85 ações) | IBrX 100; todas | Menor custo e melhor qualidade de dados |
-| D3 | Cotação com delay de ~15 min | Fechamento; tempo real | Suficiente para valuation e gratuito na maioria dos provedores |
+| D3 | Cotação de fechamento, atualizada 1 vez por dia (revisada em 2026-11-11; antes: delay de ~15 min) | Delay de ~15 min; tempo real | No plano gratuito da brapi o atraso é de 30 min e cada requisição aceita 1 ticker (~85 requisições por sincronização do universo). Atualizar a cada 15 min estouraria a cota de 15 mil/mês; 1 vez por dia usa ~17% e deixa folga para FIIs e ETFs futuros. Suficiente para valuation |
 | D4 | Sync agendado grava no banco | Chamada sob demanda com cache | Protege limites, guarda histórico, simplifica testes |
 | D5 | Provedor de API atrás de interface | Scraping; CVM direto | Rapidez no MVP e troca fácil depois |
 | D6 | Métodos: Bazin, Graham, Gordon, DCF | Múltiplos, DDM de dois estágios | Cobrem simples → completo, bom para aprendizado |
@@ -383,6 +383,7 @@ Ordem pensada para você aprender construindo e para o risco cair cedo. Cada fas
 | D20 | Paleta marinho e dourado; dourado restrito a marca e preço teto | Índigo puro; índigo e turquesa | Identidade de confiança e a "luz" do farol; restrição evita conflito com cores semânticas |
 | D21 | Logo "Torre e luz" (símbolo + nome) | Ícone de app; monograma F | Mais reconhecível |
 | D22 | Tipografia Inter com algarismos tabulares | IBM Plex; Inter + serifada | Legibilidade em tabelas de números |
+| D23 | Carteira real (import do extrato da B3, posição e preço médio, alocação, dividendos recebidos, rentabilidade vs benchmarks) vai para a v1.1. No MVP ficam o modo simulação e as projeções (2026-11-11) | Manter a carteira completa no MVP | O foco do MVP é calcular o preço teto com métodos e premissas próprios. A carteira real depende de um parser de formato externo (B3) e de um arquivo de exemplo que ainda não temos. As projeções funcionam com carteira simulada |
 
 ---
 
@@ -405,7 +406,7 @@ Ordem pensada para você aprender construindo e para o risco cair cedo. Cada fas
 
 ### O que preciso de você
 
-- Um **extrato real da B3 (anonimizado)** para especificar o parser de importação.
+- (v1.1) Um **extrato real da B3 (anonimizado)** para especificar o parser de importação. Não é necessário no MVP.
 - Confirmar se **os extras da v1.1** continuam fora do MVP quando o núcleo estiver pronto (principalmente os filtros anti-armadilha, que eu recomendo).
 
 ### Custos recorrentes (preencher conforme surgirem)
