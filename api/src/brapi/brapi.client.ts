@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiFetch } from '../util/apiFetch.js';
+import type { BrapiQuoteResponse } from './brapi.types.js';
 
 const BASE_URL = 'https://brapi.dev/api/v2';
 
@@ -20,6 +21,6 @@ export class BrapiClient {
   // Free plan: 1 ticker per request.
   async getQuote(symbol: string) {
     const url = `${BASE_URL}/stocks/quote?symbols=${encodeURIComponent(symbol)}`;
-    return this.apiFetch.fetch<unknown>(url, this.token);
+    return this.apiFetch.fetch<BrapiQuoteResponse>(url, this.token);
   }
 }
