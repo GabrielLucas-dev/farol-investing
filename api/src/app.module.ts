@@ -4,6 +4,7 @@ import { AppService } from './app.service.js';
 import { BrapiModule } from './brapi/brapi.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { z } from 'zod';
+import { HealthModule } from './health/health.module.js';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { z } from 'zod';
       }),
     }),
     BrapiModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
